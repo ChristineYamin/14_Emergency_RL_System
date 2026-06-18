@@ -12,6 +12,12 @@ class EmergencyEnvironment:
         self.steps = 0
         self.max_steps = 100
 
+        self.num_obstacles = 10
+        self.obstacles = []
+
+        self.num_traffic_zones = 5
+        self.traffic_zones = []
+
     def reset(self):
         self.steps = 0
 
@@ -25,6 +31,34 @@ class EmergencyEnvironment:
             random.randint(0, self.grid_size - 1)
         )
 
+        self.obstacles = []
+        while len(self.obstacles) < self.num_obstacles:
+            obstacle = (
+                random.randint(0, self.grid_size - 1),
+                random.randint(0, self.grid_size - 1)
+            )
+
+            if (
+                obstacle != self.ambulance_pos
+                and obstacle != self.emergency_pos
+                and obstacle not in self.obstacles
+            ):
+                self.obstacles.append(obstacle)
+        
+        self.traffic_zones = []
+        while len(self.traffic_zones) < self.num_traffic_zones:
+            zone = (
+                random.randint(0, self.grid_size - 1),
+                random.randint(0, self.grid_size - 1)
+            )
+
+            if (
+                zone != self.ambulance_pos
+                and zone != self.emergency_pos
+                and zone not in self.obstacles
+                and zone not in self.traffic_zones
+            ):
+                self.traffic_zones.append(zone)
         return self.get_state()
 
     def get_state(self):
@@ -57,8 +91,19 @@ class EmergencyEnvironment:
         x = max(0, min(x, self.grid_size - 1))
         y = max(0, min(y, self.grid_size - 1))
 
-        self.ambulance_pos = (x,y)
-
+        new_position = (x,y)
+        if new_position not in self.obstacles:
+            self.ambulance_pos = new_position
+        
+        if new_position in self.obstacles:
+            reward = -10
+            done = False
+            return self.get_state(), reward, done
+        
+        if self.ambulance_pos in self.traffic_zones:
+            reward = -6
+            done = False
+            return self.get_state(), reward, done
         # Reward System
         if self.ambulance_pos == self.emergency_pos:
             reward = 100
@@ -93,3 +138,6 @@ if __name__ == "__main__":
             f"Reward: {reward}, "
             f"Done: {done}"
         )
+    
+    print("Obstacles:", env.obstacles)
+    print("Traffic Zones:", env.traffic_zones)
