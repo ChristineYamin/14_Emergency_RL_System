@@ -1,6 +1,7 @@
 from environment import EmergencyEnvironment
 from agent import QLearningAgent
 import pandas as pd
+import pickle
 
 # Create environment and agent
 env = EmergencyEnvironment()
@@ -64,3 +65,8 @@ print("Results saved to training_results.csv")
 # Show last 10 rewards
 print("\nLast 10 Episode Rewards:")
 print(episode_rewards[-10:])
+
+with open("q_table.pkl", "wb") as f:
+    pickle.dump(agent.q_table, f)
+
+print("Q-table saved!")

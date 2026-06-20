@@ -1,7 +1,7 @@
 from environment import EmergencyEnvironment
 from baseline import RandomAgent, GreedyAgent
 
-def evaluate_random(num_episode=100):
+def evaluate_random(num_episode=20):
     env = EmergencyEnvironment()
     agent = RandomAgent()
 
@@ -18,7 +18,7 @@ def evaluate_random(num_episode=100):
             total_reward += reward
     return total_reward / num_episode
 
-def evaluate_greedy(num_episodes=100):
+def evaluate_greedy(num_episodes=20):
     env = EmergencyEnvironment()
     agent = GreedyAgent()
 
@@ -38,6 +38,15 @@ def evaluate_greedy(num_episodes=100):
 
 random_score = evaluate_random()
 greedy_score = evaluate_greedy()
+
+print("\n---------Baseline Results----------")
+print("Starting Random Evaluation...")
+random_score = evaluate_random()
+print("Random Finished")
+
+print("Starting Greedy Evaluation...")
+greedy_score = evaluate_greedy()
+print("Greedy Finished")
 
 print("\n---------Baseline Results----------")
 print(f"Random Agent Avg Reward : {random_score:.2f}")

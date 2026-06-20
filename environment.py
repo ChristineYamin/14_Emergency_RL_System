@@ -10,8 +10,7 @@ class EmergencyEnvironment:
         self.emergency_pos = None
 
         self.steps = 0
-        self.max_steps = 100
-
+        self.max_steps = 10
         self.num_obstacles = 10
         self.obstacles = []
 
@@ -94,30 +93,21 @@ class EmergencyEnvironment:
         new_position = (x,y)
         if new_position not in self.obstacles:
             self.ambulance_pos = new_position
-        
+
+        reward = -1
         if new_position in self.obstacles:
             reward = -10
-            done = False
-            return self.get_state(), reward, done
-        
-        if self.ambulance_pos in self.traffic_zones:
+        elif self.ambulance_pos in self.traffic_zones:
             reward = -6
-            done = False
-            return self.get_state(), reward, done
-        # Reward System
         if self.ambulance_pos == self.emergency_pos:
             reward = 100
             done = True
         elif self.steps >= self.max_steps:
             reward = -100
             done = True
-            
         else:
-            reward = -1
             done = False
-
         return self.get_state(), reward, done
-    
 if __name__ == "__main__":
 
     env = EmergencyEnvironment()
